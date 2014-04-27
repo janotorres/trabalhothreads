@@ -1,8 +1,13 @@
+package br.com.trabalhothreads.main;
+
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import br.com.trabalhothreads.algorithm.AlgorithmLexical;
+import br.com.trabalhothreads.objects.Texto;
 
 public class Main {
 

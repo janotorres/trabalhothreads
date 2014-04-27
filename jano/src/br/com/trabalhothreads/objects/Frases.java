@@ -1,3 +1,4 @@
+package br.com.trabalhothreads.objects;
 
 public class Frases {
 
@@ -24,6 +25,11 @@ public class Frases {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public void addInvalidWord(String word) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

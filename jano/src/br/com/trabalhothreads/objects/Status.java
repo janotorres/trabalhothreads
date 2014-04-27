@@ -1,3 +1,4 @@
+package br.com.trabalhothreads.objects;
 
 public enum Status {
 	
