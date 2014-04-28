@@ -2,13 +2,18 @@ package br.com.trabalhothreads.objects;
 
 public class Lexical {
 
+	private static Lexical instance;
+
+	private Lexical(){
+		super();
+	}
 	public static Lexical getInstance() {
-		// TODO Auto-generated method stub
-		return null;
+		if (instance == null)
+			instance = new Lexical();
+		return instance;
 	}
 
 	public boolean validateWord(String word) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
