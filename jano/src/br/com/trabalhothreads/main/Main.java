@@ -15,12 +15,13 @@ public class Main {
 		Scanner scanner = new Scanner(System.in);
 		try {			
 			System.out.println("Informe o número de arquivos a serem processados simultaneamente.");
-			Integer quantidadeArquivosSimultaneos = scanner.nextInt(); 	
+			Integer quantidadeArquivosSimultaneos = 1;//scanner.nextInt(); 	
 			System.out.println("Informe o diretório onde se encontram os arquivos:");
-			String pathname = scanner.next();
+			String pathname = "C:\\temp"; //scanner.next();
 			File directory = new File(pathname);
 			File[] files = directory.listFiles();
 			List<Texto> textos = new ArrayList<Texto>();
+			
 			if (files != null){
 				System.out.println("Quantidade de arquivos a serem processados:"+files.length);
 				for (int i = 0; i < files.length; i++) {

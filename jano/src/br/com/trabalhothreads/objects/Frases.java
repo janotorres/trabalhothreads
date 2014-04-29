@@ -1,22 +1,27 @@
 package br.com.trabalhothreads.objects;
 
-public class Frases {
+import java.util.ArrayList;
+import java.util.List;
 
-	public Frases(String conteudo){
+public class Frases{
+
+	public Frases(String conteudo, int position){
 		this.conteudo = conteudo;
 		this.status = Status.NAO_AVALIADA;
-		
+		this.position = position;
+		this.invalidWords = new ArrayList<String>();
 	}
+	
+	private List<String> invalidWords;
+	
+	private int position;
+
 	private String conteudo;
 	
 	private Status status;
 
 	public String getConteudo() {
 		return conteudo;
-	}
-
-	public void setConteudo(String conteudo) {
-		this.conteudo = conteudo;
 	}
 
 	public Status getStatus() {
@@ -28,8 +33,7 @@ public class Frases {
 	}
 
 	public void addInvalidWord(String word) {
-		// TODO Auto-generated method stub
-		
+		this.invalidWords.add(word);
 	}
 	
 }
