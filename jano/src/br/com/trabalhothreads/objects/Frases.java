@@ -36,4 +36,17 @@ public class Frases{
 		this.invalidWords.add(word);
 	}
 	
+	public String palavrasInvalidas(){
+		String palavrasInvalidas = "";
+		for (String word : this.invalidWords){
+			palavrasInvalidas += word;
+		}
+		
+		return palavrasInvalidas;
+	}
+
+	public int getPosition() {
+		return position;
+	}
+
 }

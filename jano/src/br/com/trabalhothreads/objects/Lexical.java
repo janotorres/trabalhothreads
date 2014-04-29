@@ -2,7 +2,7 @@ package br.com.trabalhothreads.objects;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.PreparedStatement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,28 +23,27 @@ public class Lexical {
 
 	public boolean validateWord(String word) {
 		try {
-			if (c == null) {
-				//Class.forName("org.hsqldb.jdbc.JDBCDriver");
-				//c = DriverManager.getConnection("jdbc:hsqldb:file:/base/base",
-				//		"SA", "");
+			Pattern pt = Pattern.compile("[^\\p{L}\\d]");
+			Matcher match = pt.matcher(word);
+			while (match.find()) {
+				String s = match.group();
+				word = word.replaceAll("\\" + s, "");
+			}
 
-				Pattern pt = Pattern.compile("[^a-zA-Z0-9]");
-				Matcher match = pt.matcher(word);
-				while (match.find()) {
-					String s = match.group();
-					word = word.replaceAll("\\" + s, "");
-				}
-
-				try {
-					Integer.parseInt(word);
+			try {
+				Integer.parseInt(word);
+				return true;
+			} catch (NumberFormatException nfe) {
+				Class.forName("org.hsqldb.jdbcDriver");
+				c = DriverManager.getConnection("jdbc:hsqldb:file:/base/base", "SA", "");
+				PreparedStatement ps = c.prepareStatement("SELECT * FROM PALAVRA_CORRETA WHERE PALAVRA = '"+word+"'");
+				if (ps.executeQuery().next()) {					
 					return true;
-				} catch (NumberFormatException nfe) {
-					//analisar palavra
+				} else {
 					return false;
 				}
-
+				
 			}
-			return false;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

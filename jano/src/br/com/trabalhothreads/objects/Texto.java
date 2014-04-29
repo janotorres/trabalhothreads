@@ -134,9 +134,14 @@ public class Texto {
 	public void imprimirRelatorio(){
 			lock.lock();
 			try {
+				
 				while(!this.frases.isEmpty() || !loaded)
 					condition.await();
+				
 				System.out.println("Gerando Relatorio de erros." + this.getFile().getName());
+				for (Frases frase : this.frasesInvalidas) {
+					System.out.println("Gerando Relatorio de erros." + this.getFile().getName() +" Frase "+ frase.getConteudo() + ", lista de palavras inválidas: " + frase.palavrasInvalidas());					
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} finally {

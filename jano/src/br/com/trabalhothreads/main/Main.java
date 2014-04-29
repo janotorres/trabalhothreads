@@ -2,6 +2,7 @@ package br.com.trabalhothreads.main;
 
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,13 +12,13 @@ import br.com.trabalhothreads.objects.Texto;
 
 public class Main {
 
-	public static void main(String[] args) {
-		Scanner scanner = new Scanner(System.in);
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+	    Scanner scanner = new Scanner(System.in);
 		try {			
 			System.out.println("Informe o número de arquivos a serem processados simultaneamente.");
 			Integer quantidadeArquivosSimultaneos = 1;//scanner.nextInt(); 	
 			System.out.println("Informe o diretório onde se encontram os arquivos:");
-			String pathname = "C:\\temp"; //scanner.next();
+			String pathname = "C:\\tmp"; //scanner.next();
 			File directory = new File(pathname);
 			File[] files = directory.listFiles();
 			List<Texto> textos = new ArrayList<Texto>();
@@ -35,6 +36,6 @@ public class Main {
 			algorithm.start();
 		} finally {
 			scanner.close();
-		}
+		} 
 	}
 }

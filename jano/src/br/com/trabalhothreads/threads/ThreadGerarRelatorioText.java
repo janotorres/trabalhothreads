@@ -13,7 +13,6 @@ public class ThreadGerarRelatorioText implements Runnable{
 	
 	@Override
 	public void run(){
-		System.out.println("XXX");
 		this.texto.imprimirRelatorio();
 	}
 
