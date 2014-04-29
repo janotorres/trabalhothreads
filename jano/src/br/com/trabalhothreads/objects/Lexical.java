@@ -8,20 +8,10 @@ import java.util.regex.Pattern;
 
 public class Lexical {
 
-	private static Lexical instance;
-	Connection c;
 
-	private Lexical() {
-		super();
-	}
+	private Lexical() { 	}
 
-	public static Lexical getInstance() {
-		if (instance == null)
-			instance = new Lexical();
-		return instance;
-	}
-
-	public boolean validateWord(String word) {
+	public static boolean validateWord(String word) {
 		try {
 			Pattern pt = Pattern.compile("[^\\p{L}\\d]");
 			Matcher match = pt.matcher(word);
@@ -35,7 +25,7 @@ public class Lexical {
 				return true;
 			} catch (NumberFormatException nfe) {
 				Class.forName("org.hsqldb.jdbcDriver");
-				c = DriverManager.getConnection("jdbc:hsqldb:file:/base/base", "SA", "");
+				Connection c = DriverManager.getConnection("jdbc:hsqldb:file:/base/base", "SA", "");
 				PreparedStatement ps = c.prepareStatement("SELECT * FROM PALAVRA_CORRETA WHERE PALAVRA = '"+word+"'");
 				if (ps.executeQuery().next()) {					
 					return true;

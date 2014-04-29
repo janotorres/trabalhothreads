@@ -1,8 +1,10 @@
 package br.com.trabalhothreads.objects;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -101,8 +103,7 @@ public class Texto {
 					String[] words = conteudo.split("\\s+");
 					for (int j = 0; j < words.length; j++) {
 						String word = words[j];
-						Lexical lexical = Lexical.getInstance();
-						boolean validWord = lexical.validateWord(word);
+						boolean validWord = Lexical.validateWord(word);
 						if (!validWord){
 							frase.addInvalidWord(word);
 							if (!frase.getStatus().equals(Status.INVALIDA)){
@@ -137,13 +138,25 @@ public class Texto {
 				
 				while(!this.frases.isEmpty() || !loaded)
 					condition.await();
-				
-				System.out.println("Gerando Relatorio de erros." + this.getFile().getName());
-				for (Frases frase : this.frasesInvalidas) {
-					System.out.println("Gerando Relatorio de erros." + this.getFile().getName() +" Frase "+ frase.getConteudo() + ", lista de palavras inválidas: " + frase.palavrasInvalidas());					
+
+				if (!this.frasesInvalidas.isEmpty()){
+					BufferedWriter bufferedWriter =  null;
+					try {
+						File pastaErros = new File(file.getParentFile().getPath() + File.separator + "erros");
+						if (!pastaErros.exists())
+							pastaErros.mkdir();
+						bufferedWriter = new BufferedWriter(new FileWriter(new File(pastaErros.getPath()  + File.separator + file.getName())));
+						bufferedWriter.write("Relatorio de erros.\r\n");
+						for (Frases frase : this.frasesInvalidas) {
+							bufferedWriter.write("Frase: "+ frase.getConteudo() + ", lista de palavras inválidas: " + frase.palavrasInvalidas() + "\r\n");					
+						}
+					} finally {
+						if (bufferedWriter != null)
+							bufferedWriter.close();
+					}
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
 			} finally {
 				lock.unlock();
 			}

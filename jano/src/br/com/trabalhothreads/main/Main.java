@@ -27,8 +27,10 @@ public class Main {
 				System.out.println("Quantidade de arquivos a serem processados:"+files.length);
 				for (int i = 0; i < files.length; i++) {
 					File file = files[i];
-					System.out.println("Arquivo: "+file.getName());
-					textos.add(new Texto(file));
+					if (file.isFile()){
+						System.out.println("Arquivo: "+file.getName());
+						textos.add(new Texto(file));
+					}
 				}			
 			}	
 			
