@@ -11,7 +11,7 @@ import java.util.List;
 import jomp.runtime.OMP;
 
 
-public class Texto {
+public class Texto_jomp {
 	
 	private List frases;
 	
@@ -21,11 +21,11 @@ public class Texto {
 	
 	private File file;
 
-	public Texto() {
+	public Texto_jomp() {
 		super();
 	}
 	
-	public Texto(File file) {
+	public Texto_jomp(File file) {
 		this.frases = new ArrayList();
 		this.frasesInvalidas = new ArrayList();
 		this.frasesValidas = new ArrayList();

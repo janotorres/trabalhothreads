@@ -7,11 +7,11 @@ import br.com.trabalhothreads.objects.Texto;
 import br.com.trabalhothreads.objects.Texto_jomp;
 
 
-public class AlgorithmLexical {
+public class AlgorithmLexical_jomp {
 	
 	private List textos;
 	
-	public AlgorithmLexical(List textos) {
+	public AlgorithmLexical_jomp(List textos) {
 		this.textos =  textos;
 	}
 
