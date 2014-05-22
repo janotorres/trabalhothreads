@@ -13,7 +13,7 @@ import jomp.runtime.OMP;
 public class Texto_jomp {
 
 
-	public List frases;
+	private List frases;
 
 	private List frasesValidas;
 
@@ -242,7 +242,7 @@ private class __omp_Class0 extends jomp.runtime.BusyTask {
                                           }
                                           // set global from reduction variables
                                           if (jomp.runtime.OMP.getThreadNum(__omp_me) == 0) {
-                                            fraseValida&= _cp_fraseValida;
+                                            fraseValida = _cp_fraseValida;
                                           }
                                           } // OMP FOR BLOCK ENDS
 

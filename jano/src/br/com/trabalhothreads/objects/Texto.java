@@ -92,7 +92,7 @@ public class Texto {
 
 				boolean fraseValida = true;
 				OMP.setNumThreads(words.length);
-				// omp parallel for private(i) reduction(&:fraseValida)
+				//omp parallel for private(i) reduction(&&:fraseValida)
 				for (int i = 0; i < words.length; i++) {
 					String word = words[i];
 					boolean validWord = Lexical.validateWord(word);
