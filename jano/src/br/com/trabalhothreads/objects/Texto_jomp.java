@@ -10,29 +10,28 @@ import java.util.List;
 
 import jomp.runtime.OMP;
 
-
 public class Texto_jomp {
 
-	
-	private List frases;
-	
+
+	public List frases;
+
 	private List frasesValidas;
 
 	private List frasesInvalidas;
-	
+
 	private File file;
 
 	public Texto_jomp() {
 		super();
 	}
-	
+
 	public Texto_jomp(File file) {
 		this.frases = new ArrayList();
 		this.frasesInvalidas = new ArrayList();
 		this.frasesValidas = new ArrayList();
 		this.file = file;
 	}
-	
+
 	public File getFile() {
 		return file;
 	}
@@ -44,56 +43,62 @@ public class Texto_jomp {
 	public void processar() {
 		BufferedReader reader = null;
 		try {
-			System.out.println("Tentando iniciar processamento do  arquivo : " + this.getFile().getName());
-			System.out.println("Iniciando processamento do  arquivo : " + this.getFile().getName());
-			reader = new BufferedReader( new FileReader(this.getFile()));
-			String         line = null;
-		    StringBuilder  stringBuilder = new StringBuilder();
-		    String         ls = System.getProperty("line.separator");
-	
-		    while( ( line = reader.readLine() ) != null ) {
-		        stringBuilder.append( line );
-		        stringBuilder.append( ls );
-		    }
-		    
-		    String texto = stringBuilder.toString();
-		    String[] frases = texto.split("\\.");
-		    for (int i = 0; i < frases.length; i++) {
-		    	this.frases.add(new Frases(frases[i], i));
+			System.out.println("Tentando iniciar processamento do  arquivo : "
+					+ this.getFile().getName());
+			System.out.println("Iniciando processamento do  arquivo : "
+					+ this.getFile().getName());
+			reader = new BufferedReader(new FileReader(this.getFile()));
+			String line = null;
+			StringBuilder stringBuilder = new StringBuilder();
+			String ls = System.getProperty("line.separator");
+
+			while ((line = reader.readLine()) != null) {
+				stringBuilder.append(line);
+				stringBuilder.append(ls);
 			}
-		} catch (Exception e){
+
+			String texto = stringBuilder.toString();
+			String[] frases = texto.split("\\.");
+			for (int i = 0; i < frases.length; i++) {
+				this.frases.add(new Frases(frases[i], i));
+			}
+		} catch (Exception e) {
 			throw new RuntimeException(e);
-		} finally{
-			System.out.println("Finalizando processamento do  arquivo : " + this.getFile().getName());
+		} finally {
+			System.out.println("Finalizando processamento do  arquivo : "
+					+ this.getFile().getName());
 			try {
-				if (reader != null){
+				if (reader != null) {
 					reader.close();
 				}
-			} catch (Exception e1){
+			} catch (Exception e1) {
 				throw new RuntimeException(e1);
 			}
 		}
 	}
 
-	public void processarFrases(){
+	public void processarFrases() {
 		try {
-			System.out.println("Iniciando processamento das Frases do  arquivo : " + this.getFile().getName());
-			while (!this.frases.isEmpty()) {				
+			System.out
+					.println("Iniciando processamento das Frases do  arquivo : "
+							+ this.getFile().getName());
+			while (!this.frases.isEmpty()) {
 				Frases frase = (Frases) this.frases.get(0);
 				String conteudo = frase.getConteudo();
-				if (conteudo == null || "".equals(conteudo.trim())){
+				if (conteudo == null || "".equals(conteudo.trim())) {
 					this.frases.remove(frase);
 					continue;
 				}
 				String[] words = conteudo.split("\\s+");
-				
-				int i;
+
+				boolean fraseValida = true;
 				OMP.setNumThreads(words.length);
 
 // OMP PARALLEL BLOCK BEGINS
 {
   __omp_Class0 __omp_Object0 = new __omp_Class0();
   // shared variables
+  __omp_Object0.fraseValida = fraseValida;
   __omp_Object0.words = words;
   __omp_Object0.conteudo = conteudo;
   __omp_Object0.frase = frase;
@@ -104,11 +109,10 @@ public class Texto_jomp {
   } catch(Throwable __omp_exception) {
     System.err.println("OMP Warning: Illegal thread exception ignored!");
     System.err.println(__omp_exception);
-    __omp_exception.printStackTrace();
   }
   // reduction variables
   // shared variables
-  i = __omp_Object0.i;
+  fraseValida = __omp_Object0.fraseValida;
   words = __omp_Object0.words;
   conteudo = __omp_Object0.conteudo;
   frase = __omp_Object0.frase;
@@ -116,37 +120,46 @@ public class Texto_jomp {
 }
 // OMP PARALLEL BLOCK ENDS
 
-				
-				if (!frase.getStatus().equals(Status.INVALIDA)){
+
+				if (!fraseValida) {
+					frase.setStatus(Status.INVALIDA);
+					frasesInvalidas.add(frase);
+					frases.remove(0);
+				} else {
 					frase.setStatus(Status.VALIDA);
 					this.frasesValidas.add(frase);
 					this.frases.remove(0);
-				}	
+				}
 			}
-			
-			System.out.println("Finalizando processamento das Frases do  arquivo : " + this.getFile().getName());
-		} catch (Exception e){
-			e.printStackTrace();
+
+			System.out
+					.println("Finalizando processamento das Frases do  arquivo : "
+							+ this.getFile().getName());
+		} catch (Exception e) {
 			throw new RuntimeException(e);
-			
 		}
 	}
-	
-	public void imprimirRelatorio(){
+
+	public void imprimirRelatorio() {
 		try {
 
-			if (!this.frasesInvalidas.isEmpty()){
+			if (!this.frasesInvalidas.isEmpty()) {
 
-				File pastaErros = new File(file.getParentFile().getPath() + File.separator + "erros");
+				File pastaErros = new File(file.getParentFile().getPath()
+						+ File.separator + "erros");
 				if (!pastaErros.exists())
 					pastaErros.mkdir();
-				BufferedWriter bufferedWriter =  null;
-				bufferedWriter = new BufferedWriter(new FileWriter(new File(pastaErros.getPath()  + File.separator + file.getName())));
-				bufferedWriter.write("Relatorio de erros.\r\n");				
-							
-				for (int i = 0; i < frasesInvalidas.size(); i++) {					
+				BufferedWriter bufferedWriter = null;
+				bufferedWriter = new BufferedWriter(
+						new FileWriter(new File(pastaErros.getPath()
+								+ File.separator + file.getName())));
+				bufferedWriter.write("Relatorio de erros.\r\n");
+
+				for (int i = 0; i < frasesInvalidas.size(); i++) {
 					Frases frase = (Frases) frasesInvalidas.get(i);
-					bufferedWriter.write("Frase: "+ frase.getConteudo() + ", lista de palavras inv\u00e1lidas: " + frase.palavrasInvalidas() + "\r\n");
+					bufferedWriter.write("Frase: " + frase.getConteudo()
+							+ ", lista de palavras inv\u00e1lidas: "
+							+ frase.palavrasInvalidas() + "\r\n");
 				}
 			}
 		} catch (Exception e) {
@@ -157,7 +170,7 @@ public class Texto_jomp {
 // OMP PARALLEL REGION INNER CLASS DEFINITION BEGINS
 private class __omp_Class0 extends jomp.runtime.BusyTask {
   // shared variables
-  int i;
+  boolean fraseValida;
   String [ ] words;
   String conteudo;
   Frases frase;
@@ -175,11 +188,13 @@ private class __omp_Class0 extends jomp.runtime.BusyTask {
                                           // copy of firstprivate variables, initialized
                                           // copy of lastprivate variables
                                           // variables to hold result of reduction
+                                          boolean _cp_fraseValida;
                                           boolean amLast=false;
                                           {
                                             // firstprivate variables + init
                                             // [last]private variables
                                             // reduction variables + init to default
+                                            boolean  fraseValida = true;
                                             // -------------------------------------
                                             jomp.runtime.LoopData __omp_WholeData2 = new jomp.runtime.LoopData();
                                             jomp.runtime.LoopData __omp_ChunkData1 = new jomp.runtime.LoopData();
@@ -199,17 +214,11 @@ private class __omp_Class0 extends jomp.runtime.BusyTask {
                                               for(int i = (int)__omp_ChunkData1.start; i < __omp_ChunkData1.stop; i += __omp_ChunkData1.step) {
                                                 // OMP USER CODE BEGINS
  {
-					System.out.println("ta paralelizando a thread " + OMP.getThreadNum());
 					String word = words[i];
 					boolean validWord = Lexical.validateWord(word);
-					if (!validWord){
+					fraseValida = validWord;
+					if (!validWord) {
 						frase.addInvalidWord(word);
-						if (!frase.getStatus().equals(Status.INVALIDA)){
-							frase.setStatus(Status.INVALIDA);
-							frasesInvalidas.add(frase);
-							frases.remove(0);
-						}
-						
 					}
 				}
                                                 // OMP USER CODE ENDS
@@ -222,6 +231,7 @@ private class __omp_Class0 extends jomp.runtime.BusyTask {
                                             } // of for(;;)
                                             } // of while
                                             // call reducer
+                                            _cp_fraseValida = (boolean) jomp.runtime.OMP.doAndReduce(__omp_me, fraseValida);
                                             jomp.runtime.OMP.doBarrier(__omp_me);
                                             // copy lastprivate variables out
                                             if (amLast) {
@@ -232,6 +242,7 @@ private class __omp_Class0 extends jomp.runtime.BusyTask {
                                           }
                                           // set global from reduction variables
                                           if (jomp.runtime.OMP.getThreadNum(__omp_me) == 0) {
+                                            fraseValida&= _cp_fraseValida;
                                           }
                                           } // OMP FOR BLOCK ENDS
 
